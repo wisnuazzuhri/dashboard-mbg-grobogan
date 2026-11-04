@@ -19,24 +19,14 @@ export interface SheetFetchResult {
 
 const DEFAULT_SHEET_URL_KEY = 'mbg_grobogan_sheet_url';
 
-// Mengambil URL Google Sheets dengan fallback ke URL Master Data Grobogan (170 SPPG)
 export const getStoredSheetUrl = (): string => {
   if (typeof window === 'undefined') return '';
+
   return (
     localStorage.getItem(DEFAULT_SHEET_URL_KEY) ||
-    'https://docs.google.com/spreadsheets/d/1jP0MXb0IYN7ZvFApQliZyCOCQykmBxwIS47B8VPJS_s/export?format=csv' ||
-    ''
+    (import.meta as any).env?.VITE_GOOGLE_SHEETS_CSV_URL ||
+    'https://docs.google.com/spreadsheets/d/1jP0MXb0IYN7ZvFApQliZyCOCQykmBxwIS47B8VPJS_s/export?format=csv'
   );
-};
-
-export const setStoredSheetUrl = (url: string): void => {
-  if (typeof window !== 'undefined') {
-    if (!url.trim()) {
-      localStorage.removeItem(DEFAULT_SHEET_URL_KEY);
-    } else {
-      localStorage.setItem(DEFAULT_SHEET_URL_KEY, url.trim());
-    }
-  }
 };
 
 /**
