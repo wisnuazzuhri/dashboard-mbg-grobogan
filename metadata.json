@@ -1,0 +1,6 @@
+{
+  "name": "Dashboard MBG Grobogan - Monitoring Makan Bergizi Gratis",
+  "description": "Sistem Informasi Eksekutif & Monitoring Geospasial Program Strategis Nasional Makan Bergizi Gratis (MBG) 19 Kecamatan di Kabupaten Grobogan, Jawa Tengah.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
