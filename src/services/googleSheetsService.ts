@@ -28,14 +28,13 @@ export const getStoredSheetUrl = (): string => {
   );
 };
 
-export const setStoredSheetUrl = (url: string): void => {
-  if (typeof window !== 'undefined') {
-    if (!url.trim()) {
-      localStorage.removeItem(DEFAULT_SHEET_URL_KEY);
-    } else {
-      localStorage.setItem(DEFAULT_SHEET_URL_KEY, url.trim());
-    }
-  }
+export const getStoredSheetUrl = (): string => {
+  if (typeof window === 'undefined') return '';
+  return (
+    localStorage.getItem(DEFAULT_SHEET_URL_KEY) ||
+  'https://docs.google.com/spreadsheets/d/1jP0MXb0IYN7ZvFApQliZyCOCQykmBxwIS47B8VPJS_s/export?format=csv' // <-- Tempel link CSV Anda di sini
+    || ''
+  );
 };
 
 /**
