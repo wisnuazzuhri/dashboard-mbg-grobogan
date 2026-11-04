@@ -19,9 +19,7 @@ export interface SheetFetchResult {
 
 const DEFAULT_SHEET_URL_KEY = 'mbg_grobogan_sheet_url';
 
-const DEFAULT_SHEET_URL_KEY = 'mbg_grobogan_sheet_url';
-
-// CUKUP SATU SAJA SEPERTI INI:
+// Mengambil URL Google Sheets dengan fallback ke URL Master Data Grobogan (170 SPPG)
 export const getStoredSheetUrl = (): string => {
   if (typeof window === 'undefined') return '';
   return (
@@ -284,69 +282,69 @@ export async function fetchMBGMasterData(customUrl?: string): Promise<SheetFetch
               unit.kontak = kontakClean;
             }
 
-          // ✅ KODE PERBAIKAN BARU:
-              const katUpper = String(kategori).toUpperCase().trim();
-              const pmUpper = String(namaPM).toUpperCase().trim();
+            // Normalisasi pencocokan kata kunci kategori
+            const katUpper = String(kategori).toUpperCase().trim();
+            const pmUpper = String(namaPM).toUpperCase().trim();
 
-              // 1. Prioritaskan pengecekan Kelompok 3B (Balita, Bumil, Busui)
-              if (katUpper.includes('BALITA') || pmUpper.includes('BALITA')) {
-                unit.kelompok3B.balita += totalPM;
-              } else if (katUpper.includes('BUSUI') || pmUpper.includes('BUSUI')) {
-                unit.kelompok3B.busui += totalPM;
-              } else if (katUpper.includes('BUMIL') || katUpper.includes('BUHAMIL') || pmUpper.includes('BUMIL')) {
-                unit.kelompok3B.bumil += totalPM;
-              } 
-              // 2. SD / MI (Diperiksa SEBELUM PAUD/TK untuk menghindari kata "SD" atau "MI" bentrok dengan nama sekolah)
-              else if (
-                katUpper.includes('SD') || katUpper.includes('MI') || 
-                pmUpper.includes('SD ') || pmUpper.includes('SDN') || pmUpper.includes(' MI ') || pmUpper.includes('MIN ')
-              ) {
-                unit.jenjangPendidikan.sdMi += totalPM;
-              } 
-              // 3. SMP / MTs
-              else if (
-                katUpper.includes('SMP') || katUpper.includes('MTS') || 
-                pmUpper.includes('SMP') || pmUpper.includes('MTS')
-              ) {
-                unit.jenjangPendidikan.smpMts += totalPM;
-              } 
-              // 4. SMA / SMK / MA
-              else if (
-                katUpper.includes('SMA') || katUpper.includes('SMK') || katUpper.includes('MA') || 
-                pmUpper.includes('SMA') || pmUpper.includes('SMK') || pmUpper.includes(' MAN ')
-              ) {
-                unit.jenjangPendidikan.smaSmkMa += totalPM;
-              } 
-              // 5. Pesantren / Ponpes / Santri
-              else if (
-                katUpper.includes('PESANTREN') || katUpper.includes('PONPES') || katUpper.includes('SANTRI') ||
-                pmUpper.includes('PESANTREN') || pmUpper.includes('PONPES')
-              ) {
-                unit.jenjangPendidikan.pesantren += totalPM;
-              } 
-              // 6. PAUD / TK / RA / KB / SPS
-              else if (
-                katUpper.includes('PAUD') || katUpper.includes('TK') || katUpper.includes('RA') || katUpper.includes('KB') ||
-                pmUpper.includes('PAUD') || pmUpper.includes('TK') || pmUpper.includes('RA') || pmUpper.includes('KB ')
-              ) {
-                unit.jenjangPendidikan.paudTkRa += totalPM;
-              } 
-              // 7. SLB
-              else if (katUpper.includes('SLB') || pmUpper.includes('SLB')) {
-                unit.jenjangPendidikan.slb += totalPM;
-              } 
-              // 8. Seminari
-              else if (katUpper.includes('SEMINARI') || pmUpper.includes('SEMINARI')) {
-                unit.jenjangPendidikan.seminari += totalPM;
-              } 
-              // 9. PKBM
-              else if (katUpper.includes('PKBM') || pmUpper.includes('PKBM')) {
-                unit.jenjangPendidikan.pkbm += totalPM;
-              } 
-              // 10. Fallback jika kategori berisi informasi jenjang dasar
-              else {
-                unit.jenjangPendidikan.sdMi += totalPM;
-              }
+            // 1. Prioritaskan Kelompok 3B (Balita, Busui, Bumil)
+            if (katUpper.includes('BALITA') || pmUpper.includes('BALITA')) {
+              unit.kelompok3B.balita += totalPM;
+            } else if (katUpper.includes('BUSUI') || pmUpper.includes('BUSUI')) {
+              unit.kelompok3B.busui += totalPM;
+            } else if (katUpper.includes('BUMIL') || katUpper.includes('BUHAMIL') || pmUpper.includes('BUMIL')) {
+              unit.kelompok3B.bumil += totalPM;
+            } 
+            // 2. Pesantren / Ponpes / Santri
+            else if (
+              katUpper.includes('PESANTREN') || katUpper.includes('PONPES') || katUpper.includes('SANTRI') ||
+              pmUpper.includes('PESANTREN') || pmUpper.includes('PONPES')
+            ) {
+              unit.jenjangPendidikan.pesantren += totalPM;
+            } 
+            // 3. SMA / SMK / MA
+            else if (
+              katUpper.includes('SMA') || katUpper.includes('SMK') || katUpper.includes('MA /') || katUpper.includes('SEDERAJAT') && katUpper.includes('SMA') || 
+              pmUpper.includes('SMA') || pmUpper.includes('SMK') || pmUpper.includes('MAN ') || pmUpper.includes('MAS ')
+            ) {
+              unit.jenjangPendidikan.smaSmkMa += totalPM;
+            } 
+            // 4. SMP / MTs
+            else if (
+              katUpper.includes('SMP') || katUpper.includes('MTS') || 
+              pmUpper.includes('SMP') || pmUpper.includes('MTS') || pmUpper.includes('MTSS')
+            ) {
+              unit.jenjangPendidikan.smpMts += totalPM;
+            } 
+            // 5. SD / MI
+            else if (
+              katUpper.includes('SD ') || katUpper.includes('SD/') || katUpper.includes('MI ') || katUpper.includes('MI/') ||
+              pmUpper.includes('SD ') || pmUpper.includes('SDN') || pmUpper.includes(' MI ') || pmUpper.includes('MIN ') || pmUpper.includes('MIS ')
+            ) {
+              unit.jenjangPendidikan.sdMi += totalPM;
+            } 
+            // 6. PAUD / TK / RA / KB / SPS
+            else if (
+              katUpper.includes('PAUD') || katUpper.includes('TK') || katUpper.includes('RA') || katUpper.includes('KB') || katUpper.includes('TK/') ||
+              pmUpper.includes('PAUD') || pmUpper.includes('TK') || pmUpper.includes('RA') || pmUpper.includes('KB ') || pmUpper.includes('BA ')
+            ) {
+              unit.jenjangPendidikan.paudTkRa += totalPM;
+            } 
+            // 7. SLB
+            else if (katUpper.includes('SLB') || pmUpper.includes('SLB')) {
+              unit.jenjangPendidikan.slb += totalPM;
+            } 
+            // 8. Seminari
+            else if (katUpper.includes('SEMINARI') || pmUpper.includes('SEMINARI')) {
+              unit.jenjangPendidikan.seminari += totalPM;
+            } 
+            // 9. PKBM
+            else if (katUpper.includes('PKBM') || pmUpper.includes('PKBM')) {
+              unit.jenjangPendidikan.pkbm += totalPM;
+            } 
+            // 10. Default ke SD/MI jika tidak teridentifikasi
+            else {
+              unit.jenjangPendidikan.sdMi += totalPM;
+            }
           });
 
           const parsedList = Array.from(sppgMap.values());
